@@ -1,0 +1,41 @@
+
+
+/* ==========================================================================
+   Base styles: opinionated defaults
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+    
+    body {
+        background-color: white;
+    }
+    body {
+        font-size: 14px;
+        -webkit-font-size: 14px; /* Webkit prefix */
+    }
+    .container {
+        padding: 10px;
+        -webkit-padding: 10px; /* Webkit prefix */
+        width: 100%;
+        -webkit-width: 100%; /* Webkit prefix */
+        margin: 0 auto;
+        -webkit-margin: 0 auto; /* Webkit prefix */
+    }
+}
+@media screen and (max-width: 480px) {
+    
+    body {
+        background-color: white;
+    }
+    body {
+        font-size: 12px;
+        -webkit-font-size: 12px; /* Webkit prefix */
+    }
+  .container {
+        padding: 10px;
+        -webkit-padding: 10px; /* Webkit prefix */
+        width: 100%;
+        -webkit-width: 100%; /* Webkit prefix */
+        margin: 0 auto;
+        -webkit-margin: 0 auto; /* Webkit prefix */
+    }
+}
