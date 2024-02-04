@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.9.2",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.1.1",
     "@testing-library/jest-dom": "^5.16.5",
