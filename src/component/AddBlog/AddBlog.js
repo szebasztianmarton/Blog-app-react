@@ -1,9 +1,6 @@
-import { useState } from "react";
-import { useHistory } from "react-router";
-
-const AddBlog = () => {
-    const [title, setTitle] = useState('');
-    const [body, setBody] = useState('');
+    
+    "use strict";
+    import React, { useState } from "react";
     const [author, setAuthor] = useState('Tasfia');
     const [blogImage, setBlogImage] = useState(null);
     const [category, setCategory] = useState('Travel');
