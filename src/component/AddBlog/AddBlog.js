@@ -1,4 +1,3 @@
-    
     "use strict";
     import React, { useState } from "react";
     const [author, setAuthor] = useState('Tasfia');
@@ -99,6 +98,6 @@
             </form>
         </div>
      );
-}
+
  
-export default AddBlog;
+     export default AddBlog;
