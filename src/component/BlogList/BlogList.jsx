@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 const BlogList = ({blogs, searchTerm, searchCategory, searchHandler, categoryHandler}) => {
-    const imgUrl = "http://localhost:1337";
+    const imgUrl = "http://localhost:3000";
     
     const inputEl = useRef("");
     const selectEl = useRef("");
