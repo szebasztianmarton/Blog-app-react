@@ -1,19 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hu">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="description" content="React Tailwind CSS Blog" />
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e0e0c" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content="Editorial blog — minimal brutalist design" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
 
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
 
-    <title>React Tailwind CSS Blog</title>
+    <script>
+      // FOUC-mentes theme inicializáció — render előtt fut le
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var theme = stored === 'dark' || stored === 'light' ? stored : (prefersDark ? 'dark' : 'light');
+          if (theme === 'dark') document.documentElement.classList.add('dark');
+          document.documentElement.dataset.theme = theme;
+        } catch (e) {}
+      })();
+    </script>
+
+    <title>WriteUp — Editorial blog</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
