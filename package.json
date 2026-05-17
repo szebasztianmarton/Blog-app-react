@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "description": "Egyszeru blog alkalmazas React frontenddel es Express + SQLite backenddel",
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=9"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -14,16 +19,26 @@
     "tailwindcss": "^3.4.0",
     "web-vitals": "^2.1.4"
   },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --watchAll=false",
-    "test:watch": "react-scripts test",
-    "eject": "react-scripts eject",
-    "server:install": "npm --prefix server install",
-    "server:seed": "npm --prefix server run seed",
-    "server:start": "npm --prefix server start",
-    "server:test": "npm --prefix server test"
+    "client": "react-scripts start",
+    "client:build": "react-scripts build",
+    "client:test": "react-scripts test --watchAll=false",
+    "client:test:watch": "react-scripts test",
+    "server": "pnpm --dir server start",
+    "server:dev": "pnpm --dir server dev",
+    "server:install": "pnpm --dir server install",
+    "server:seed": "pnpm --dir server seed",
+    "server:test": "pnpm --dir server test",
+    "dev": "concurrently -k -n SERVER,CLIENT -c yellow,cyan \"pnpm run server\" \"pnpm run client\"",
+    "start": "pnpm run dev",
+    "build": "pnpm run client:build",
+    "test": "pnpm run client:test && pnpm run server:test",
+    "install:all": "pnpm install && pnpm --dir server install",
+    "seed": "pnpm run server:seed",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
