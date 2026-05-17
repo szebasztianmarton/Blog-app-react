@@ -46,21 +46,21 @@ export default function Home() {
         <p className="eyebrow mb-6">Issue 01 / 2026</p>
         <h1 className="heading-display text-balance mb-8">
           Gondolatok,<br />
-          <span className="text-accent dark:text-accent-dark">vita</span> es<br />
-          minden ami koztuk van.
+          <span className="text-accent dark:text-accent-dark">vita</span> és<br />
+          minden ami közöttük van.
         </h1>
         <p className="max-w-prose text-lg md:text-xl leading-relaxed text-ink-muted dark:text-bone-muted text-pretty">
-          Egy editorial blog technologiarol, sportrol, szepsegrol es utazasrol.
-          Hosszu olvasmanyok, eles velemenyek, semmi szuro.
+          Egy editorial blog technológiáról, sportról, szépségről és utazásról.
+          Hosszú olvasmányok, éles vélemények, semmi szűrő.
         </p>
         <div className="mt-10 flex flex-wrap gap-3">
           <Link to="/blogs/add" className="btn-brutal btn-brutal--accent">
-            Irok valamit
+            Írok valamit
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>
           </Link>
-          <a href="#blogs" className="btn-brutal btn-brutal--ghost">Goerdulj le</a>
+          <a href="#blogs" className="btn-brutal btn-brutal--ghost">Görgetj le</a>
         </div>
       </section>
 
@@ -69,9 +69,9 @@ export default function Home() {
       <section id="blogs" className="container-zine pb-24">
         <div className="flex flex-col gap-6 mb-10 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="eyebrow mb-2">{blogs.length} bejegyzes</p>
+            <p className="eyebrow mb-2">{blogs.length} bejegyzés</p>
             <h2 className="font-display text-4xl md:text-5xl font-bold tracking-tight">
-              A teljes archivum
+              A teljes archívum
             </h2>
           </div>
           <SearchControls
@@ -90,11 +90,11 @@ export default function Home() {
 
         {!loading && !error && filtered.length === 0 && (
           <EmptyState
-            title={hasFilter ? 'Nincs talalat a keresesre' : 'Meg nincs bejegyzes'}
+            title={hasFilter ? 'Nincs találat a keresésre' : 'Még nincs bejegyzés'}
             description={
               hasFilter
-                ? 'Probald meg modositani a keresest vagy a kategoriat.'
-                : 'Legy te az elso aki ir egyet.'
+                ? 'Próbálj meg módosítani a keresést vagy a kategóriát.'
+                : 'Légy te az első aki ír egyet.'
             }
             action={
               hasFilter ? (
@@ -103,11 +103,11 @@ export default function Home() {
                   className="btn-brutal btn-brutal--ghost"
                   onClick={() => { setSearchTerm(''); setSearchCategory('None'); }}
                 >
-                  Szurok torlese
+                  Szűrők törlése
                 </button>
               ) : (
                 <Link to="/blogs/add" className="btn-brutal btn-brutal--accent">
-                  Uj bejegyzes
+                  Új bejegyzés
                 </Link>
               )
             }
@@ -133,7 +133,7 @@ function SearchControls({ searchTerm, searchCategory, onSearch, onCategory }) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row md:w-auto md:min-w-[460px]">
       <label className="relative flex-1">
-        <span className="sr-only">Kereses</span>
+        <span className="sr-only">Keresés</span>
         <svg
           viewBox="0 0 24 24"
           aria-hidden="true"
@@ -145,21 +145,21 @@ function SearchControls({ searchTerm, searchCategory, onSearch, onCategory }) {
         </svg>
         <input
           type="search"
-          placeholder="Kereses..."
+          placeholder="Keresés..."
           value={searchTerm}
           onChange={(e) => onSearch(e.target.value)}
           className="input-brutal pl-9"
-          aria-label="Bejegyzesek keresese"
+          aria-label="Bejegyzések keresése"
         />
       </label>
 
       <label className="sm:w-auto">
-        <span className="sr-only">Kategoria</span>
+        <span className="sr-only">Kategória</span>
         <select
           value={searchCategory}
           onChange={(e) => onCategory(e.target.value)}
           className="input-brutal appearance-none pr-9 sm:w-44"
-          aria-label="Kategoria szuro"
+          aria-label="Kategória szűrő"
           style={{
             backgroundImage:
               "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><path d='M6 9l6 6 6-6'/></svg>\")",
@@ -168,7 +168,7 @@ function SearchControls({ searchTerm, searchCategory, onSearch, onCategory }) {
           }}
         >
           {CATEGORIES.map((c) => (
-            <option key={c} value={c}>{c === 'None' ? 'Osszes kategoria' : c}</option>
+            <option key={c} value={c}>{c === 'None' ? 'Összes kategória' : c}</option>
           ))}
         </select>
       </label>

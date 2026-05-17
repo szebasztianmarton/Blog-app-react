@@ -28,10 +28,10 @@ export default function AddBlog() {
 
   const validate = () => {
     const errs = {};
-    if (!form.title.trim())  errs.title  = 'Kotelezo mezo';
-    if (!form.author.trim()) errs.author = 'Kotelezo mezo';
-    if (!form.body.trim())   errs.body   = 'Kotelezo mezo';
-    if (!form.category)      errs.category = 'Valaszd ki a kategoriat';
+    if (!form.title.trim())  errs.title  = 'Kötelező mező';
+    if (!form.author.trim()) errs.author = 'Kötelező mező';
+    if (!form.body.trim())   errs.body   = 'Kötelező mező';
+    if (!form.category)      errs.category = 'Válaszd ki a kategóriát';
     setFieldErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -52,23 +52,23 @@ export default function AddBlog() {
 
   return (
     <div className="container-zine py-12 md:py-20">
-      <nav aria-label="Iranyt mutato" className="mb-8">
+      <nav aria-label="Haladás" className="mb-8">
         <Link to="/" className="meta-mono inline-flex items-center gap-2 hover:text-accent dark:hover:text-accent-dark">
           <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
             <path d="M19 12H5M11 6l-6 6 6 6" />
           </svg>
-          Vissza az archivumba
+          Vissza az archívumba
         </Link>
       </nav>
 
       <header className="mb-12">
         <p className="eyebrow mb-4">Compose / New</p>
         <h1 className="font-display text-5xl md:text-6xl font-bold tracking-tight text-balance">
-          Uj bejegyzes
+          Új bejegyzés
         </h1>
         <p className="mt-4 max-w-prose text-ink-muted dark:text-bone-muted">
-          Toltsd ki a mezoket. A piros csillaggal jelolt mezok kotelezok.
-          A bejegyzes azonnal elerheto lesz az archivumban.
+          Töltsd ki a mezőket. A piros csillaggal jelölt mezők kötelezők.
+          A bejegyzés azonnal elérhető lesz az archívumban.
         </p>
       </header>
 
@@ -85,7 +85,7 @@ export default function AddBlog() {
       <form onSubmit={handleSubmit} noValidate className="space-y-8">
         <Field
           id="title"
-          label="Cim"
+          label="Cím"
           required
           error={fieldErrors.title}
         >
@@ -94,7 +94,7 @@ export default function AddBlog() {
             type="text"
             value={form.title}
             onChange={update('title')}
-            placeholder="Adj egy markans cimet..."
+            placeholder="Adj egy markáns címet..."
             className="input-brutal"
             autoComplete="off"
             aria-invalid={!!fieldErrors.title}
@@ -102,7 +102,7 @@ export default function AddBlog() {
         </Field>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <Field id="author" label="Szerzo" required error={fieldErrors.author}>
+          <Field id="author" label="Szerző" required error={fieldErrors.author}>
             <input
               id="author"
               type="text"
@@ -115,7 +115,7 @@ export default function AddBlog() {
             />
           </Field>
 
-          <Field id="category" label="Kategoria" required error={fieldErrors.category}>
+          <Field id="category" label="Kategória" required error={fieldErrors.category}>
             <select
               id="category"
               value={form.category}
@@ -134,7 +134,7 @@ export default function AddBlog() {
           </Field>
         </div>
 
-        <Field id="blogImage" label="Boritokep URL" hint="Opcionalis — barmilyen elerheto kep URL">
+        <Field id="blogImage" label="Borítókép URL" hint="Opcionális — bármilyen elérhető kép URL">
           <input
             id="blogImage"
             type="url"
@@ -146,13 +146,13 @@ export default function AddBlog() {
           />
         </Field>
 
-        <Field id="body" label="Tartalom" required error={fieldErrors.body} hint="Markdown nem tamogatott, csak sima szoveg.">
+        <Field id="body" label="Tartalom" required error={fieldErrors.body} hint="Markdown nem támogatott, csak sima szöveg.">
           <textarea
             id="body"
             rows={10}
             value={form.body}
             onChange={update('body')}
-            placeholder="Irj valamit ami szamit..."
+            placeholder="Írj valamit ami számít..."
             className="input-brutal resize-y min-h-[12rem]"
             aria-invalid={!!fieldErrors.body}
           />
@@ -164,7 +164,7 @@ export default function AddBlog() {
             disabled={submitting}
             className="btn-brutal btn-brutal--accent"
           >
-            {submitting ? 'Mentes...' : 'Publikalas'}
+            {submitting ? 'Mentés...' : 'Publikálás'}
             {!submitting && (
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
                 <path d="M5 12h14M13 6l6 6-6 6" />
@@ -172,7 +172,7 @@ export default function AddBlog() {
             )}
           </button>
           <Link to="/" className="btn-brutal btn-brutal--ghost">
-            Megse
+            Mégse
           </Link>
         </div>
       </form>

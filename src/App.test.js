@@ -17,13 +17,13 @@ afterEach(() => {
 });
 
 describe('App', () => {
-  it('a fooldalon megjelenik a WRITEUP wordmark', async () => {
+  it('a főoldalon megjelenik a WRITEUP wordmark', async () => {
     render(<App />);
     const wordmarks = await screen.findAllByText(/writeup/i);
     expect(wordmarks.length).toBeGreaterThan(0);
   });
 
-  it('megprobalja lekerni a blogokat a backendrol', async () => {
+  it('megpróbálja lekérni a blogokat a backendről', async () => {
     render(<App />);
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalled();
@@ -32,7 +32,7 @@ describe('App', () => {
     expect(calledUrl).toMatch(/\/api\/blogs/);
   });
 
-  it('hibauzenetet jelenit meg ha a backend hibat ad', async () => {
+  it('hibaüzenetet jelenít meg ha a backend hibát ad', async () => {
     global.fetch = jest.fn(() =>
       Promise.resolve({
         ok: false,
@@ -43,7 +43,7 @@ describe('App', () => {
     );
     render(<App />);
     await waitFor(() => {
-      expect(screen.getByText(/valami hiba tortent/i)).toBeInTheDocument();
+      expect(screen.getByText(/valami hiba történt/i)).toBeInTheDocument();
     });
   });
 });

@@ -6,7 +6,7 @@ export default function ErrorState({ message, onRetry }) {
     >
       <p className="font-mono text-eyebrow text-accent dark:text-accent-dark mb-4">Error</p>
       <h2 className="font-display text-2xl md:text-3xl font-bold tracking-tight mb-3 text-balance">
-        Valami hiba tortent
+        Valami hiba történt
       </h2>
       <p className="text-ink-muted dark:text-bone-muted break-words">
         {message || 'Ismeretlen hiba'}
@@ -14,7 +14,7 @@ export default function ErrorState({ message, onRetry }) {
       {onRetry && (
         <div className="mt-6">
           <button type="button" onClick={onRetry} className="btn-brutal btn-brutal--danger">
-            Ujraprobalas
+            Újrapróbálás
           </button>
         </div>
       )}

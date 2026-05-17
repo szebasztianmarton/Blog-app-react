@@ -12,7 +12,7 @@ export default function App() {
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:btn-brutal"
       >
-        Ugras a tartalomra
+        Ugrás a tartalomra
       </a>
       <Navbar />
       <main id="main" className="min-h-[calc(100vh-5rem)]">
@@ -27,7 +27,7 @@ export default function App() {
           <p className="font-display text-2xl font-bold tracking-tight">
             WRITEUP<span className="text-accent dark:text-accent-dark">.</span>
           </p>
-          <p className="meta-mono">© 2026 Editorial blog · MIT licensz</p>
+          <p className="meta-mono">© 2026 Editorial blog · MIT licenc</p>
         </div>
       </footer>
     </Router>

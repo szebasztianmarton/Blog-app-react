@@ -46,10 +46,10 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id) || id <= 0) {
-    return res.status(400).json({ error: 'Ervenytelen id' });
+    return res.status(400).json({ error: 'Érvénytelen id' });
   }
   const row = selectById.get(id);
-  if (!row) return res.status(404).json({ error: 'Blog nem talalhato' });
+  if (!row) return res.status(404).json({ error: 'Blog nem található' });
   res.json(row);
 });
 
@@ -57,7 +57,7 @@ router.post('/', (req, res) => {
   const { title, body, author, blogImage, category } = req.body || {};
   const missing = ['title', 'body', 'author', 'category'].filter(k => !req.body?.[k]?.trim?.());
   if (missing.length) {
-    return res.status(400).json({ error: 'Hianyzo mezok', missing });
+    return res.status(400).json({ error: 'Hiányzó mezők', missing });
   }
 
   const create = db.transaction(() => {
@@ -74,7 +74,7 @@ router.post('/', (req, res) => {
 router.delete('/:id', (req, res) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id) || id <= 0) {
-    return res.status(400).json({ error: 'Ervenytelen id' });
+    return res.status(400).json({ error: 'Érvénytelen id' });
   }
   const info = deleteByIdStmt.run(id);
   if (info.changes === 0) return res.status(404).json({ error: 'Blog nem talalhato' });
