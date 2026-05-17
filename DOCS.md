@@ -9,26 +9,30 @@
 3. [Adatfolyam](#3-adatfolyam)
 4. [Backend modulok](#4-backend-modulok)
 5. [Frontend komponensek](#5-frontend-komponensek)
-6. [Adatbázis](#6-adatbázis)
-7. [API referencia](#7-api-referencia)
-8. [Konfiguráció és környezeti változók](#8-konfiguráció-és-környezeti-változók)
-9. [Tesztelési stratégia](#9-tesztelési-stratégia)
-10. [CI/CD pipeline](#10-cicd-pipeline)
-11. [Konténerizáció](#11-konténerizáció)
-12. [Fejlesztői útmutató](#12-fejlesztői-útmutató)
-13. [Hibakeresés (troubleshooting)](#13-hibakeresés-troubleshooting)
+6. [Design rendszer (editorial brutalism)](#6-design-rendszer-editorial-brutalism)
+7. [Adatbázis](#7-adatbázis)
+8. [API referencia](#8-api-referencia)
+9. [Konfiguráció és környezeti változók](#9-konfiguráció-és-környezeti-változók)
+10. [Tesztelési stratégia](#10-tesztelési-stratégia)
+11. [CI/CD pipeline](#11-cicd-pipeline)
+12. [Konténerizáció](#12-konténerizáció)
+13. [Fejlesztői útmutató](#13-fejlesztői-útmutató)
+14. [Hibakeresés (troubleshooting)](#14-hibakeresés-troubleshooting)
 
 ---
 
 ## 1. Áttekintés
 
-A Blog App egy egyszerű, kategorizált blogbejegyzéseket kezelő webalkalmazás, amely a következő funkciókat kínálja:
+A Blog App egy editorial hangulatú, kategorizált blogbejegyzéseket kezelő webalkalmazás, amely a következő funkciókat kínálja:
 
-- **Listanézet**: az összes blog megjelenítése responsive grid layoutban
-- **Kereső + kategória szűrés**: a listán élőben szűrhet a felhasználó
-- **Részletek nézet**: egy konkrét blog teljes szövege
-- **Új bejegyzés**: form a backend felé `POST` kéréssel
-- **Törlés**: blog eltávolítása a részletek nézetből
+- **Listanézet**: az összes blog megjelenítése responsive grid-ben, brutalist card layouttal
+- **Kereső + kategória szűrés**: a listán élőben szűrhet a felhasználó, dedikált toolbar a Home hero alatt
+- **Részletek nézet**: egy konkrét blog editorial layoutban (oversized headline, pull-quote lede, pre-formatted body)
+- **Új bejegyzés**: brutalist form inline validációval, kötelező mezők piros csillaggal
+- **Törlés**: blog eltávolítása a részletek nézetből, megerősítő dialog
+- **Theme toggle**: light és dark mode, system preference alapján induló, manuális override-bal, FOUC-mentes inicializálással
+- **Állapot-UX**: Skeleton (loading), EmptyState (üres lista vagy szűrés), ErrorState (retry gombbal)
+- **Akadálymentes**: skip-link, focus-visible accent ring, aria-label-ek mindenhol
 
 ### Technológiai stack
 
@@ -36,7 +40,8 @@ A Blog App egy egyszerű, kategorizált blogbejegyzéseket kezelő webalkalmazá
 |---|---|---|
 | Frontend keretrendszer | React | 18.x |
 | Routing | react-router-dom | 6.x |
-| Stílus | TailwindCSS | 3.x |
+| Stílus | TailwindCSS (class-based dark mode) | 3.x |
+| Tipográfia | Space Grotesk + Inter + JetBrains Mono (Google Fonts) | — |
 | Build / dev server | Create React App (react-scripts) | 5.x |
 | Backend keretrendszer | Express.js | 4.x |
 | Adatbázis | SQLite (`node:sqlite`) | 3.51 |
@@ -53,6 +58,8 @@ A Blog App egy egyszerű, kategorizált blogbejegyzéseket kezelő webalkalmazá
 - **Beépített SQLite**: a `node:sqlite` modul használata azt jelenti, hogy nincs natív build, nincs extra dependency, nincs Python-igény.
 - **Migrációs séma**: a `db.js` modul betöltésekor automatikusan futnak a `CREATE TABLE IF NOT EXISTS` utasítások — nincs külön migráció.
 - **Stateless API**: nincs session, nincs auth (egyszerű projekt). Minden kérés független.
+- **Editorial brutalism**: minimal brutalist design rendszer (lásd 6. szekció) — 2px borderek, currentColor, offset shadow-k, semmi glow vagy soft startup UI. A vizuális vocabularium a `tailwind.css` `@layer components` rétegében koncentrálódik.
+- **Theme rendszer CSS-osztály alapon**: `<html class="dark">` toggling, FOUC-mentes inline bootstrap a `<head>`-ben — a böngésző még a React mount előtt eldönti a témát.
 
 ---
 
@@ -63,6 +70,7 @@ A Blog App egy egyszerű, kategorizált blogbejegyzéseket kezelő webalkalmazá
 ```
 +--------------------------------------------------------+
 |                    FELHASZNÁLÓ BÖNGÉSZŐ                |
+|        (<head> theme-bootstrap dönt: light / dark)     |
 |                  http://localhost:3001                 |
 +--------------------------------------------------------+
                           |
@@ -71,10 +79,24 @@ A Blog App egy egyszerű, kategorizált blogbejegyzéseket kezelő webalkalmazá
 +--------------------------------------------------------+
 |              REACT FRONTEND (CRA dev server)           |
 |                                                        |
-|  +-------------+    +---------+    +-----------------+ |
-|  | App + Router|--->| Home /  |--->|  src/api.js     | |
-|  | (routes)    |    | AddBlog |    |  (fetch helper) | |
-|  +-------------+    +---------+    +-----------------+ |
+|  +-----------+   +-----------+   +-----------------+   |
+|  |  App      |   |  Navbar   |   |  Footer         |   |
+|  |  + Router |   | (sticky,  |   |  (rule + meta)  |   |
+|  |  + skip   |   | toggle)   |   |                 |   |
+|  +-----------+   +-----------+   +-----------------+   |
+|        |              ^                                |
+|        v              |                                |
+|  +-----------+   +-------------+   +---------------+   |
+|  | Home /    |   | ThemeToggle |   | ui/Skeleton   |   |
+|  | AddBlog / |-->| useTheme()  |   | ui/EmptyState |   |
+|  | Details   |   +-------------+   | ui/ErrorState |   |
+|  +-----------+                     +---------------+   |
+|        |                                               |
+|        v                                               |
+|  +-----------------+                                   |
+|  |  src/api.js     |                                   |
+|  | (fetch wrapper) |                                   |
+|  +-----------------+                                   |
 +--------------------------------------------------------+
                           |
                           | fetch('/api/blogs')
@@ -268,12 +290,12 @@ Egy lekérdezés: `LEFT JOIN` a `blogs` táblával, `COUNT(b.id) AS blogCount`. 
 ### Útvonalak (`src/App.js`)
 
 ```
-/                    -> Home          (lista + szűrés)
-/blogs/add           -> AddBlog       (form)
-/blogs/:id           -> BlogDetails   (egyetlen blog + delete)
+/                    -> Home          (hero + filter + lista)
+/blogs/add           -> AddBlog       (brutalist form)
+/blogs/:id           -> BlogDetails   (editorial layout + delete)
 ```
 
-A `Navbar` minden oldalon megjelenik, a `Routes` blokk a `Navbar` után.
+Az `App` a `Router` mellett render egy **skip-link**et a billentyűzettel navigálóknak, a `Navbar`-t (sticky), a `<main>` tagben a route-okat, és egy footer-t a wordmarkkal és licencsorral.
 
 ### `src/api.js` — Központi fetch wrapper
 
@@ -285,43 +307,200 @@ export const api = { listBlogs, getBlog, createBlog, deleteBlog, listCategories 
 
 **Miért így?**
 - Egy helyen van minden URL — átírni egy sor.
-- Egységes hibakezelés: nem 2xx → `throw new Error(...)`.
+- Egységes hibakezelés: nem 2xx → `throw new Error('API hiba (status): message')`.
 - 204 No Content → `null` (a `DELETE` endpoint így működik).
 - A `REACT_APP_API_URL` env változó override-olja a default URL-t (Docker, production).
 
-### `Home.js`
+### `src/theme.js` — Theme rendszer
 
-`useEffect` mount-kor letölti a blogokat. Lokális state-ben tartja:
-- `blogs` — összes
-- `loading` / `error` — UI állapotok
-- `searchTerm` / `searchCategory` — kontrollált inputok
+```js
+export function getInitialTheme() { /* localStorage → matchMedia → 'light' */ }
+export function useTheme() {
+  return { theme, setTheme, toggle };
+}
+```
 
-A szűrés **kliensoldali** — egyszerű projektnél jobb a lista cache-elése, mint minden szűréskor új API-hívás. Az `Object.values(blog).join(' ').toLowerCase().includes(searchTerm)` heurisztikus, de elég, mivel kevés blog van.
+**Kulcs döntések:**
+- **FOUC-mentes**: a `public/index.html` `<head>`-ben futó inline IIFE már az első festés előtt felteszi a `dark` class-t a `<html>`-re, így nincs "fehér felvillanás" sötét módban.
+- **Manuális override flag**: a `theme:manual` localStorage kulcs jelzi, hogy a user kifejezetten választott — ha igen, a system pref későbbi változása **nem** írja felül.
+- **`color-scheme` CSS property**: a `:root` / `html.dark` beállítja, hogy a böngésző natív elemei (scrollbar, form auto-fill) is illeszkedjenek a témához.
 
-### `BlogList.jsx`
+### `src/component/ThemeToggle/ThemeToggle.jsx`
 
-**Pure component** — props alapján rendererel. A keresőmező és a kategória select onChange-eseményei a parent által átadott handlerekre delegálnak. Ez teszi könnyen tesztelhetővé.
+Square brutalist icon button (`btn-brutal btn-brutal--icon`), Sun ↔ Moon SVG ikon váltással. `aria-label` és `aria-pressed` attribútumokkal akadálymentes. Mind a Navbar desktop, mind a mobile branch-éhez beépítve.
 
-Responsive grid:
-- `grid-cols-1` (mobil)
-- `md:grid-cols-2` (tablet)
-- `lg:grid-cols-3` (desktop)
+### `src/component/ui/` — Megosztott állapot-komponensek
 
-### `AddBlog.js`
-
-Kontrollált form: a `form` objektum minden mezője state-ben van, az `update(key)` helper egységesíti az onChange handler-eket. Submit után `navigate(`/blogs/${created.id}`)` a részletek oldalra.
-
-### `BlogDetails.js`
-
-A `useParams()` kiolvassa az `:id`-t az URL-ből, és a `useEffect`-tel letölti. A `Delete` gomb `window.confirm`-mal kérdez vissza, majd `api.deleteBlog(id)` után visszanavigál a fő listára.
+| Komponens | Mit csinál |
+|---|---|
+| `Skeleton.jsx` | `SkeletonLine`, `SkeletonCard`, `SkeletonGrid` — animated pulse blokkok a loading állapotokhoz. A `SkeletonCard` ugyanazokat az arányokat tartja, mint a valódi `BlogCard`, így nincs layout shift. |
+| `EmptyState.jsx` | Szakadt-szegélyes (dashed border) blokk eyebrow + display headline + leírás + opcionális action gombbal. A Home dinamikusan vált a copy között: szűrésnél "Nincs talalat", egyébként "Meg nincs bejegyzes". |
+| `ErrorState.jsx` | Accent-bordered alert role-lal, retry callback gombbal. A Home és a BlogDetails közös módon használja. |
 
 ### `Navbar.js`
 
-Mobil hamburger menü `useState`-tel. Tailwind responsive helpereket használ (`md:hidden`, `md:block`, `md:flex`).
+**Sticky** header `top-0`-val, `border-b-2 border-current`-tel, `backdrop-blur`-rel és `bg-paper/95` (light) / `bg-night/95` (dark) félig-átlátszó hátérrel. A bal oldalon a `WRITEUP.` wordmark — az utolsó pont accent színű, ez a brand mikro-akcentus.
+
+A jobb oldalon desktop nézetben `NavLink`-ek (`react-router-dom` v6 — automatikus aktív állapot kezelés accent színnel), majd a `ThemeToggle`. Mobilon hamburger ikon ami close-ra (X) vált, a menü egy `border-t-2`-vel szeparált blokkban nyílik. Útvonalváltáskor automatikusan bezáródik (`useLocation` figyelés).
+
+### `Home.js`
+
+Kétrészes layout:
+
+1. **Hero** — `eyebrow` ("Issue 01 / 2026") + `heading-display` (clamp 2.75–5.5rem) + lede paragraph + két CTA (`btn-brutal--accent` "Irok valamit" + `btn-brutal--ghost` "Goerdulj le" — utóbbi `href="#blogs"` belső horgonyra).
+2. **Archive szekció** — bal oldalon eyebrow + count + h2, jobb oldalon a `<SearchControls>` (icon-prefixed search input + custom-arrow select). A három terminális állapot egymást kizárva renderelődik:
+   - `loading` → `<SkeletonGrid count={6} />`
+   - `error` → `<ErrorState message onRetry />`
+   - `!loading && filtered.length === 0` → `<EmptyState>` ami dinamikusan vált copy között (szűrés vs. üres adatbázis), és a megfelelő action gomb (szűrők törlése vs. új bejegyzés CTA).
+   - különben → `<BlogList hideToolbar />`
+
+A szűrés `useMemo`-val cache-elt, kliensoldalon, `Object.values(...).join(' ').toLowerCase().includes(...)` heurisztikával.
+
+### `BlogList.jsx`
+
+**Pure component** props-szal vezérelve. A `BlogCard` minden bloghoz:
+
+- 16:10 grayscale `<img>` ami hover-re `scale-103` és teli színűvé telítődik (`grayscale-0`)
+- `tag-mono` kategória chip + zero-padded id (`#001`, `#002`)
+- balanced display title (`text-balance` CSS property)
+- 3 soros line-clamp-1 leírás
+- meta footer: author + lokalizált dátum (`hu-HU` locale)
+- stagger fade-in animáció (`animation-delay: ${i * 40}ms`)
+
+Hover state: `-translate-x-1 -translate-y-1 + shadow-brutal` — a card "fölfelé balra" emelkedik az offset shadow-ja előtt.
+
+A toolbar (search + select) megjelenik default-ban, de `hideToolbar` prop-pal elrejthető — a `Home` ezt használja, mert ott a `<SearchControls>` a hero alatt felelős a szűrésért.
+
+### `AddBlog.js`
+
+Editorial form layout: back-link, eyebrow + display heading + lede, majd a mezők. Egy belső `<Field>` primitive komponens egységesíti a label + input + inline hint/error renderelést:
+
+```jsx
+<Field id="title" label="Cim" required error={fieldErrors.title}>
+  <input id="title" className="input-brutal" ... />
+</Field>
+```
+
+A kötelező mezők piros `*`-ot kapnak, az inline error sor `↳` glyph-szel kezdődik. A submit gomb `btn-brutal--accent` forward-arrow ikonnal, mellette ghost `Cancel` link. Validáció (`title`, `body`, `author`, `category` non-empty) kliensoldalon, de a backend `400` válaszára is felkészülve van (`error` state).
+
+### `BlogDetails.js`
+
+Szerkesztőségi cikk-layout:
+
+1. Back-link a tetején
+2. Meta sor: kategória chip + id + dátum
+3. Oversized headline (`text-4xl md:text-6xl`)
+4. Szerző + Delete gomb sor, **dupla rule-lal** (border-t-2 + border-b-2) elválasztva
+5. Opcionális wide cover image (max 70vh)
+6. **Pull-quote lede**: az első mondat kiemelve `border-l-4 border-accent`-tel, nagyobb betűkkel
+7. Pre-formatted body — `split(/\n\n+/)` az üres soros bekezdésekre
+8. Záró rule + "Tovabbi bejegyzesek" CTA
+
+Loading állapotban a `BlogDetailsSkeleton` ugyanazt a layoutot reprodukálja Skeleton blokkokkal (nincs layout shift). Hibára `<ErrorState onRetry>`.
 
 ---
 
-## 6. Adatbázis
+## 6. Design rendszer (editorial brutalism)
+
+A vizuális vocabularium minimal brutalist — szögletes formák, vastag (2px) borderek, currentColor-os ritmus (light/dark automatikus váltás), offset shadow-k és **egy** visszafogott accent szín. A design rétege a `src/tailwind.css` `@layer base/components/utilities` blokkjaiban koncentrálódik, így JSX-ben főleg utility class neveket használunk.
+
+### Színpaletta
+
+| Token | Light mode | Dark mode | Szerep |
+|---|---|---|---|
+| `paper` | `#fafaf7` | — | háttér (oat / parchment) |
+| `paper-muted` | `#f0eee8` | — | másodlagos felület |
+| `night` | — | `#0e0e0c` | háttér |
+| `night-muted` | — | `#1a1a18` | card felület |
+| `ink` | `#0a0a0a` | — | primary szöveg / border |
+| `ink-muted` | `#6b6b66` | — | másodlagos szöveg |
+| `bone` | — | `#fafaf7` | primary szöveg / border (dark) |
+| `bone-muted` | — | `#9b9b95` | másodlagos szöveg (dark) |
+| `accent` | `#dc2626` | — | egyetlen visszafogott hangsúlyszín |
+| `accent-dark` | — | `#ef4444` | accent dark módban (jobb kontraszt) |
+
+A trükk: a borderek mindenhol `border-current`-tel mennek, így a téma váltásakor a CSS `currentColor` szabálya miatt a borderek automatikusan megfordulnak — nincs külön `dark:border-*` szelektor.
+
+### Tipográfia
+
+| Token | Font | Súly | Mire |
+|---|---|---|---|
+| `font-display` | Space Grotesk | 500/600/700 | minden heading, navigáció, button label |
+| `font-sans` | Inter | 400/500/600 | body szöveg, paragraphok |
+| `font-mono` | JetBrains Mono | 400/500 | meta információk (dátum, kategória, id) |
+
+A `text-display` token egy `clamp(2.75rem, 7vw, 5.5rem)` méretű, `letter-spacing: -0.04em`, `line-height: 0.95` — ez az editorial-szintű hero headline. A `text-eyebrow` egy `0.75rem` méretű, `letter-spacing: 0.18em` uppercase mini-felirat (Google Fonts pre-loaded a `<head>`-ben).
+
+### Border / radius / shadow szabályok
+
+- **Border**: mindenhol `border-2 border-current` — nincs vékony 1px határ, nincs opacity-trükk
+- **Radius**: alapból `rounded-none`, ritkán `rounded-sm`. A brutalist DNA-hez tartozik a derékszögű forma.
+- **Shadow**: csak offset brutal (`box-shadow: 4px 4px 0 0 currentColor`), kizárólag hover/focus állapotokban — semmi soft drop shadow, semmi glow.
+
+### Interaction nyelv
+
+- **Card hover**: `-translate-x-1 -translate-y-1` + `shadow-brutal` — a card balra-fölfelé emelkedik, mögötte az offset shadow látszik
+- **Button hover**: `-translate-x-[3px] -translate-y-[3px]` + `shadow-brutal`
+- **Button active**: visszacsattan (`translate-x-0 translate-y-0 shadow-none`) — fizikai gomb érzet
+- **Title hover**: alulról kinövő 3px-es underline (`title-link::after` width 0 → 100%)
+- **Image hover**: grayscale → színes, kicsi `scale-103`
+- **Focus**: `focus-visible:ring-2 ring-offset-2 ring-accent` — minden interaktív elem accent színű outline-t kap
+
+### Utility-k áttekintése
+
+Minden a `src/tailwind.css` `@layer components` rétegében van definiálva, JSX-ben `className`-ben hivatkozható.
+
+| Class | Mire |
+|---|---|
+| `container-zine` | `max-w-5xl mx-auto px-5 md:px-8` — feszes editorial szélesség |
+| `container-wide` | `max-w-7xl` — wide cover image-ekhez |
+| `heading-display` | A hero szintű h1 |
+| `eyebrow` | Uppercase mono mini-felirat |
+| `meta-mono` | Mono dátum/id/kategória meta |
+| `tag-mono` | Inline border-elt kategória chip |
+| `label-brutal` | Form label (uppercase mono) |
+| `btn-brutal` | Default gomb (invertálódó hover) |
+| `btn-brutal--accent` | Filled accent gomb (primary CTA) |
+| `btn-brutal--danger` | Outline accent gomb (Delete) |
+| `btn-brutal--ghost` | Transzparens gomb |
+| `btn-brutal--sm` | Kisebb (px-3 py-2 text-xs) |
+| `btn-brutal--icon` | Square ikon gomb |
+| `input-brutal` | Vastag-bordered input/select/textarea |
+| `card-brutal` | Border-2 + hover lift + offset shadow |
+| `title-link` | Cím underline-növő hover effekttel |
+| `rule` / `rule-accent` | 2px-es horizontális divider |
+| `skeleton-line` | Pulse loader sor |
+
+### Theme rendszer flow
+
+```
+1. <html> renderelése (még React előtt)
+   |
+   v
+2. <head> inline IIFE:
+     stored = localStorage.getItem('theme')
+     prefers = matchMedia('(prefers-color-scheme: dark)').matches
+     theme = stored || (prefers ? 'dark' : 'light')
+     if (theme === 'dark') html.classList.add('dark')
+     html.dataset.theme = theme
+   |
+   v
+3. React mount — Tailwind már a helyes osztállyal rendereli
+   |
+   v
+4. useTheme() szinkronizálódik az aktuális state-tel
+   |
+   v
+5. User <ThemeToggle> kattintás:
+     localStorage.setItem('theme:manual', '1')
+     setTheme(other)  -> applyTheme() átdobja a class-t
+```
+
+A `theme:manual` flag miatt a system pref későbbi változása (`matchMedia change` event) nem írja felül a felhasználó manuális választását.
+
+---
+
+## 7. Adatbázis
 
 ### Séma
 
@@ -378,7 +557,7 @@ CREATE INDEX idx_blogs_category ON blogs(category_id);
 
 ---
 
-## 7. API referencia
+## 8. API referencia
 
 Minden végpont az `/api` prefix alatt érhető el. Az alkalmazás JSON-t fogad és JSON-t ad vissza (kivéve `204 No Content`-et).
 
@@ -498,7 +677,7 @@ Az összes kategória, hozzájuk tartozó blogszámmal.
 
 ---
 
-## 8. Konfiguráció és környezeti változók
+## 9. Konfiguráció és környezeti változók
 
 ### Backend (server/)
 
@@ -536,7 +715,7 @@ REACT_APP_API_URL=http://localhost:4000/api
 
 ---
 
-## 9. Tesztelési stratégia
+## 10. Tesztelési stratégia
 
 ### Backend integrációs tesztek (Mocha + Chai + Supertest)
 
@@ -561,15 +740,17 @@ pnpm server:test
 
 ### Frontend unit tesztek (Jest + React Testing Library)
 
-**Fájlok:** `src/App.test.js`, `src/component/BlogList/BlogList.test.jsx`
+**Fájlok:** `src/App.test.js`, `src/component/BlogList/BlogList.test.jsx`, `src/setupTests.js`
 
 **Stratégia:**
 - **BlogList** — pure component, props-szal renderelve, eventek mock handler-ekkel (`jest.fn()`).
 - **App** — `global.fetch`-et mockoljuk, így a Home komponens `useEffect`-je is determinisztikus.
+- **`window.matchMedia` mock** a `setupTests.js`-ben — a `useTheme()` hook a `'(prefers-color-scheme: dark)'` query-t kérdezi le, ami a jsdom-ban alapból nincs implementálva. Mock nélkül a teszt fájl import-szinten elhasalna.
+- **Akadálymentes szelektorok** — `getByLabelText` használata `getByPlaceholderText` helyett, mert a brutalist form `aria-label`-eket ad a sr-only label-eken kívül is.
 
-**8 teszt:**
-- `BlogList`: rendering, linkek, kereső handler, kategória handler, üres lista
-- `App`: header megjelenítés, fetch hívás `/api/blogs`-ra, hiba-UI 500-as válaszra
+**9 teszt:**
+- `BlogList` (6): rendering, linkek a részletekre, kereső handler, kategória handler, üres lista, `hideToolbar` viselkedés
+- `App` (3): WRITEUP wordmark, fetch hívás `/api/blogs`-ra, ErrorState 500-as válaszra
 
 ```powershell
 pnpm client:test
@@ -585,11 +766,12 @@ pnpm test
 
 - **End-to-end teszt (Playwright/Cypress)** — egy ilyen kis projektnél overkill.
 - **DB modul direkt unit teszt** — az integrációs tesztek úgyis lefedik.
-- **CSS / vizuális regresszió** — nincs design system.
+- **CSS / vizuális regresszió** — manuálisan teszteljük a böngészőben dark / light módban.
+- **Theme toggle interakció teszt** — a `useTheme` hook localStorage + matchMedia integrációja jól tesztelhető lenne, de jelenleg manuálisan verifikáljuk.
 
 ---
 
-## 10. CI/CD pipeline
+## 11. CI/CD pipeline
 
 A `.github/workflows/node.js.yml` minden push és pull request esetén lefut a `main` és `master` ágakon.
 
@@ -634,7 +816,7 @@ A pnpm `--frozen-lockfile` flag-je biztosítja, hogy a CI-ben **pontosan ugyanaz
 
 ---
 
-## 11. Konténerizáció
+## 12. Konténerizáció
 
 ### Dockerfile szerkezete
 
@@ -690,7 +872,7 @@ docker compose exec blog-app sh # shell a konténerben
 
 ---
 
-## 12. Fejlesztői útmutató
+## 13. Fejlesztői útmutató
 
 ### Új API endpoint hozzáadása
 
@@ -747,7 +929,7 @@ Példa: `GET /api/blogs/recent?limit=5` — a legutóbbi 5 blog.
 
 ---
 
-## 13. Hibakeresés (troubleshooting)
+## 14. Hibakeresés (troubleshooting)
 
 ### `options.allowedHosts[0] should be a non-empty string`
 
