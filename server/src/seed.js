@@ -23,5 +23,5 @@ const seed = db.transaction((items) => {
 });
 
 seed(blogs);
-const count = db.prepare('SELECT COUNT(*) AS c FROM blogs').get().c;
+const { c: count } = db.prepare('SELECT COUNT(*) AS c FROM blogs').get();
 console.log(`Seed kesz: ${count} blog beszurva.`);

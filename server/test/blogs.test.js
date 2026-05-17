@@ -27,12 +27,13 @@ function seed() {
   blog.run('Foci VB 2026',          'Sport hirek szovege...', 'Bela', 'https://example.com/b.jpg', sportsId);
 }
 
+after(() => {
+  db.close();
+  fs.rmSync(TEST_DB, { force: true });
+});
+
 describe('Blog API integracios tesztek', () => {
   beforeEach(() => seed());
-  after(() => {
-    db.close();
-    fs.rmSync(TEST_DB, { force: true });
-  });
 
   describe('GET /api/health', () => {
     it('200-as statussal valaszol', async () => {

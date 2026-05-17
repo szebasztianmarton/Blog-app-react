@@ -64,7 +64,7 @@ router.post('/', (req, res) => {
     insertCategoryStmt.run(category);
     const { id: catId } = getCategoryIdStmt.get(category);
     const result = insertBlogStmt.run(title, body, author, blogImage || null, catId);
-    return selectById.get(result.lastInsertRowid);
+    return selectById.get(Number(result.lastInsertRowid));
   });
 
   const created = create();
