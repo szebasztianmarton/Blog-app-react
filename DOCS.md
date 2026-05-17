@@ -424,11 +424,11 @@ Egyetlen blog részletes lekérése.
 - `200 OK` — blog objektum (lásd fent)
 - `400 Bad Request` — `id` nem szám / negatív / nulla
   ```json
-  { "error": "Ervenytelen id" }
+  { "error": "Érvénytelen id" }
   ```
 - `404 Not Found` — nincs ilyen blog
   ```json
-  { "error": "Blog nem talalhato" }
+  { "error": "Blog nem található" }
   ```
 
 ### `POST /api/blogs`
@@ -458,7 +458,7 @@ Egyetlen blog részletes lekérése.
 - `201 Created` — visszaadja a frissen létrehozott blog objektumot (a generált `id`-vel)
 - `400 Bad Request` — hiányzó vagy üres kötelező mezők
   ```json
-  { "error": "Hianyzo mezok", "missing": ["body", "category"] }
+  { "error": "Hiányzó mezők", "missing": ["body", "category"] }
   ```
 
 ### `DELETE /api/blogs/:id`
@@ -494,7 +494,7 @@ Az összes kategória, hozzájuk tartozó blogszámmal.
 | `204 No Content` | sikeres DELETE | – |
 | `400 Bad Request` | validációs hiba | `{ error, missing? }` |
 | `404 Not Found` | nem létező erőforrás | `{ error }` |
-| `500 Internal Server Error` | unexpected | `{ error: "Belso szerver hiba" }` |
+| `500 Internal Server Error` | unexpected | `{ error: "Belső szerver hiba" }` |
 
 ---
 
@@ -776,7 +776,7 @@ taskkill /F /PID <PID>
 
 **Ok:** általában import hiba a runtime-ban (pl. nem létező komponens). Nyisd a böngésző DevTools console-ját — ott látszik.
 
-### A blogok nem jelennek meg, csak `Nincs blog bejegyzes`
+### A blogok nem jelennek meg, csak `Nincs bejegyzés`
 
 **Ok:** az adatbázis üres.
 **Megoldás:** `pnpm seed`

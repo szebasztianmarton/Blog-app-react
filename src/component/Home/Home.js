@@ -43,7 +43,6 @@ export default function Home() {
   return (
     <>
       <section className="container-zine pt-16 md:pt-24 pb-12 md:pb-16">
-        <p className="eyebrow mb-6">Issue 01 / 2026</p>
         <h1 className="heading-display text-balance mb-8">
           Gondolatok,<br />
           <span className="text-accent dark:text-accent-dark">vita</span> és<br />

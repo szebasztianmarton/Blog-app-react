@@ -125,7 +125,6 @@ export default function BlogDetails() {
         <hr className="rule max-w-prose mx-auto" />
 
         <div className="max-w-prose mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <p className="meta-mono">Vege / Issue 01</p>
           <Link to="/" className="btn-brutal btn-brutal--ghost">
             További bejegyzések
           </Link>
