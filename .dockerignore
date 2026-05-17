@@ -1,0 +1,16 @@
+node_modules
+build
+**/node_modules
+**/.git
+**/.github
+**/.vscode
+**/coverage
+**/.env
+**/.env.local
+**/data/*.db
+**/data/*.db-*
+*.md
+.gitignore
+.dockerignore
+docker-compose.yml
+Dockerfile
