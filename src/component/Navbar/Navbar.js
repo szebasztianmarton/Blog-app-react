@@ -1,53 +1,97 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
+import ThemeToggle from '../ThemeToggle/ThemeToggle';
 
-const Navbar = () => {
-  const [isOpen, setOpen] = useState(false);
+const links = [
+  { to: '/', label: 'Blogok', end: true },
+  { to: '/blogs/add', label: 'Uj bejegyzes' },
+];
+
+export default function Navbar() {
+  const [open, setOpen] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
 
   return (
-    <header className="md:flex md:items-center md:justify-between py-4 pb-0 md:pb-4">
-      <div className="w-4/5 md:w-9/12 mx-auto md:flex md:items-center md:justify-center">
-        <div className="flex items-center justify-between md:justify-center">
-          <div className="flex items-center justify-between mb-4 md:mb-0 md:hidden">
-            <h1 className="leading-none text-2xl">
-              <Link to="/" className="text-4xl no-underline font-allison text-primary">
-                WriteUp
-              </Link>
-            </h1>
-          </div>
+    <header className="sticky top-0 z-40 border-b-2 border-current bg-paper/95 backdrop-blur supports-[backdrop-filter]:bg-paper/80 dark:bg-night/95 dark:supports-[backdrop-filter]:bg-night/80">
+      <div className="container-wide flex items-center justify-between h-16 md:h-20">
+        <Link
+          to="/"
+          className="font-display font-bold text-2xl md:text-3xl tracking-tight title-link"
+          aria-label="Fooldal"
+        >
+          WRITEUP<span className="text-accent dark:text-accent-dark">.</span>
+        </Link>
 
+        <nav aria-label="Fo navigacio" className="hidden md:flex items-center gap-8">
+          {links.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              end={link.end}
+              className={({ isActive }) =>
+                `font-display uppercase text-sm tracking-wider transition-colors ${
+                  isActive ? 'text-accent dark:text-accent-dark' : 'hover:text-accent dark:hover:text-accent-dark'
+                }`
+              }
+            >
+              {link.label}
+            </NavLink>
+          ))}
+          <ThemeToggle />
+        </nav>
+
+        <div className="flex md:hidden items-center gap-2">
+          <ThemeToggle />
           <button
-            className="md:hidden mb-4"
-            onClick={() => setOpen(!isOpen)}
-            aria-label="Menu valto"
-            aria-expanded={isOpen}
+            type="button"
+            className="btn-brutal btn-brutal--icon"
+            aria-label={open ? 'Menu bezarasa' : 'Menu megnyitasa'}
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            onClick={() => setOpen((v) => !v)}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            {open ? (
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
+                <path d="M6 6l12 12M6 18L18 6" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
+                <path d="M3 6h18M3 12h18M3 18h18" />
+              </svg>
+            )}
           </button>
         </div>
+      </div>
 
-        <nav className={`md:block ${isOpen ? 'block' : 'hidden'}`}>
-          <ul className="list-reset md:flex md:items-center">
-            <li className="md:ml-4 md:mx-8 mb-2 md:mb-0">
-              <Link to="/blogs/add" className="nav-link">Uj blog</Link>
-            </li>
-            <li className="md:ml-4 md:mx-8 mb-2 md:mb-0">
-              <Link to="/" className="nav-link">Blogok</Link>
-            </li>
-            <li className="items-center justify-between mb-4 md:mb-0 md:mx-8 hidden md:inline">
-              <h1 className="leading-none text-2xl">
-                <Link to="/" className="text-4xl no-underline font-allison text-primary">
-                  WriteUp
-                </Link>
-              </h1>
-            </li>
+      {open && (
+        <nav
+          id="mobile-nav"
+          aria-label="Mobil navigacio"
+          className="md:hidden border-t-2 border-current bg-paper dark:bg-night"
+        >
+          <ul className="container-wide py-4 flex flex-col gap-1">
+            {links.map((link) => (
+              <li key={link.to}>
+                <NavLink
+                  to={link.to}
+                  end={link.end}
+                  className={({ isActive }) =>
+                    `block py-3 font-display uppercase text-base tracking-wider border-b-2 border-current/10 ${
+                      isActive ? 'text-accent dark:text-accent-dark' : ''
+                    }`
+                  }
+                >
+                  {link.label}
+                </NavLink>
+              </li>
+            ))}
           </ul>
         </nav>
-      </div>
+      )}
     </header>
   );
-};
-
-export default Navbar;
+}

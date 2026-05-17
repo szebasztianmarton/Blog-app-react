@@ -1,77 +1,102 @@
-import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 
-const BlogList = ({ blogs, searchTerm, searchCategory, searchHandler, categoryHandler }) => {
-  const inputEl = useRef('');
-  const selectEl = useRef('');
+function formatDate(iso) {
+  if (!iso) return null;
+  try {
+    const d = new Date(iso.replace(' ', 'T'));
+    if (Number.isNaN(d.getTime())) return null;
+    return d.toLocaleDateString('hu-HU', { year: 'numeric', month: '2-digit', day: '2-digit' });
+  } catch (e) {
+    return null;
+  }
+}
 
+function BlogCard({ blog, index }) {
+  const date = formatDate(blog.createdAt);
   return (
-    <div className="w-4/5 md:w-9/12 mx-auto md:mt-10">
-      <div className="flex flex-col md:flex-row justify-between mb-10 gap-4">
-        <div className="w-full md:w-1/3 shadow flex">
-          <input
-            className="w-full rounded p-2 outline-none"
-            type="text"
-            placeholder="Kereses..."
-            value={searchTerm}
-            onChange={(e) => searchHandler(e.target.value)}
-            ref={inputEl}
-          />
-          <button
-            className="bg-white w-auto flex justify-end items-center text-blue-500 p-2 hover:text-blue-400"
-            aria-label="Kereses"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </button>
+    <article
+      className="card-brutal flex flex-col h-full animate-fade-up"
+      style={{ animationDelay: `${Math.min(index * 40, 240)}ms` }}
+    >
+      <Link to={`/blogs/${blog.id}`} className="flex flex-col h-full">
+        {blog.blogImage && (
+          <div className="aspect-[16/10] border-b-2 border-current overflow-hidden bg-paper-muted dark:bg-night">
+            <img
+              src={blog.blogImage}
+              alt={blog.title}
+              loading="lazy"
+              className="h-full w-full object-cover grayscale contrast-110 transition-transform duration-300 hover:scale-[1.03] hover:grayscale-0"
+            />
+          </div>
+        )}
+        <div className="flex flex-col flex-1 p-5 md:p-6">
+          <div className="flex items-center justify-between mb-4">
+            <span className="tag-mono">{blog.category}</span>
+            <span className="meta-mono">
+              {String(blog.id).padStart(3, '0')}
+            </span>
+          </div>
+          <h3 className="font-display text-2xl md:text-[1.6rem] font-bold tracking-tight leading-tight text-balance mb-3">
+            {blog.title}
+          </h3>
+          <p className="text-pretty text-ink-muted dark:text-bone-muted line-clamp-3 mb-6">
+            {blog.body}
+          </p>
+          <div className="mt-auto flex items-center justify-between pt-4 border-t-2 border-current/15">
+            <span className="font-mono text-xs uppercase tracking-wider">
+              {blog.author}
+            </span>
+            {date && <time className="meta-mono">{date}</time>}
+          </div>
         </div>
+      </Link>
+    </article>
+  );
+}
 
-        <div>
+const CATEGORIES = ['None', 'technology', 'sports', 'beauty', 'travel'];
+
+export default function BlogList({
+  blogs,
+  searchTerm,
+  searchCategory,
+  searchHandler,
+  categoryHandler,
+  hideToolbar = false,
+}) {
+  return (
+    <div>
+      {!hideToolbar && (
+        <div className="mb-10 flex flex-col gap-3 sm:flex-row sm:items-stretch">
+          <label className="relative flex-1">
+            <span className="sr-only">Kereses</span>
+            <input
+              type="search"
+              placeholder="Kereses..."
+              value={searchTerm}
+              onChange={(e) => searchHandler(e.target.value)}
+              className="input-brutal"
+              aria-label="Bejegyzesek keresese"
+            />
+          </label>
           <select
             value={searchCategory}
-            ref={selectEl}
             onChange={(e) => categoryHandler(e.target.value)}
-            className="w-full md:w-auto h-10 border-none outline-none shadow-md bg-white text-sub-title px-2"
+            className="input-brutal sm:w-52 appearance-none"
+            aria-label="Kategoria szuro"
           >
-            <option value="None">Osszes kategoria</option>
-            <option value="technology">Technology</option>
-            <option value="sports">Sports</option>
-            <option value="beauty">Beauty</option>
-            <option value="travel">Travel</option>
+            {CATEGORIES.map((c) => (
+              <option key={c} value={c}>{c === 'None' ? 'Osszes kategoria' : c}</option>
+            ))}
           </select>
         </div>
-      </div>
+      )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {blogs.map((blog) => (
-          <article className="blog-div bg-white shadow rounded overflow-hidden" key={blog.id}>
-            <Link to={`/blogs/${blog.id}`}>
-              {blog.blogImage && (
-                <img
-                  src={blog.blogImage}
-                  alt={blog.title}
-                  className="object-cover h-64 md:h-52 w-full"
-                  loading="lazy"
-                />
-              )}
-              <div className="p-4">
-                <h2 className="py-2 text-title text-xl font-semibold">{blog.title}</h2>
-                <p className="pb-2 text-sub-title text-sm text-gray-500">Szerzo: {blog.author}</p>
-                <p className="pb-2 text-content">
-                  {blog.body.slice(0, 100)}
-                  <span className="text-primary">... Tovabb</span>
-                </p>
-                <span className="inline-block bg-gray-50 shadow-md rounded-full px-2 md:px-3 py-1 text-sm font-semibold text-gray-700">
-                  #{blog.category}
-                </span>
-              </div>
-            </Link>
-          </article>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {blogs.map((blog, i) => (
+          <BlogCard key={blog.id} blog={blog} index={i} />
         ))}
       </div>
     </div>
   );
-};
-
-export default BlogList;
+}
