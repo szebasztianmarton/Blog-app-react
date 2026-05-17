@@ -1,5 +1,16 @@
 # Blog App (React + Express + SQLite)
 
+![React](https://img.shields.io/badge/Frontend-React_18-61DAFB?logo=react&logoColor=black)
+![Express](https://img.shields.io/badge/Backend-Express_4-000000?logo=express&logoColor=white)
+![SQLite](https://img.shields.io/badge/Database-SQLite_3-003B57?logo=sqlite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Styling-TailwindCSS_3-38B2AC?logo=tailwind-css&logoColor=white)
+![Node.js](https://img.shields.io/badge/Runtime-Node.js_22-339933?logo=node.js&logoColor=white)
+![pnpm](https://img.shields.io/badge/Package%20manager-pnpm_9-F69220?logo=pnpm&logoColor=white)
+![Netlify](https://img.shields.io/badge/Hosting-Netlify-00C7B7?logo=netlify&logoColor=white)
+![GitHub_Actions](https://img.shields.io/badge/CI-GitHub_Actions-2088FF?logo=github-actions&logoColor=white)
+
+> 🔴 **Live preview (Netlify):** https://6a0a27bf29f5a800087dd337--whiteupgde.netlify.app/
+
 Egyszerű blog alkalmazás, amelyben kategória szerint lehet böngészni és új bejegyzéseket létrehozni. A frontend **React**-tel és **TailwindCSS**-szel készült, a backend **Express.js**-en fut, az adattárolás pedig **SQLite** relációs adatbázisban történik a Node.js beépített `node:sqlite` moduljával.
 
 > 📖 **Részletes technikai dokumentáció:** [DOCS.md](DOCS.md) — architektúra, adatfolyam, komponens-szintű leírás, kibővített API referencia, fejlesztői útmutató és troubleshooting.
