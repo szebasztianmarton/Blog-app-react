@@ -1,16 +1,19 @@
-FROM node:22-alpine AS client-build
+FROM node:22-alpine AS base
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+
+FROM base AS client-build
 WORKDIR /app
-COPY package.json package-lock.json* ./
-RUN npm install --legacy-peer-deps
+COPY package.json pnpm-lock.yaml* ./
+RUN pnpm install --frozen-lockfile --ignore-scripts
 COPY public ./public
 COPY src ./src
 COPY tailwind.config.js ./
-RUN npm run build
+RUN pnpm run client:build
 
-FROM node:22-alpine AS server-deps
+FROM base AS server-deps
 WORKDIR /app/server
-COPY server/package.json server/package-lock.json* ./
-RUN npm install --omit=dev
+COPY server/package.json server/pnpm-lock.yaml* ./
+RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 
 FROM node:22-alpine AS runtime
 ENV NODE_ENV=production
