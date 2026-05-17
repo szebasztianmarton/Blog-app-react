@@ -1,86 +1,47 @@
-import { useState } from "react";
-import { useQuery, gql } from "@apollo/client";
-import BlogList from "../BlogList/BlogList";
-
-
-const BLOGS = gql`
-    query GetBlogs{
-        blogs {
-            id
-            title
-            body
-            author
-            category
-            blogImage{
-              url
-            }
-          }
-    }
-`
-
+import { useEffect, useState } from 'react';
+import { api } from '../../api';
+import BlogList from '../BlogList/BlogList';
 
 const Home = () => {
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchCategory, setSearchCategory] = useState('None');
 
-    const {isLoading, error, data} = useQuery(BLOGS)
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    api.listBlogs()
+      .then(data => { if (active) setBlogs(data); })
+      .catch(err => { if (active) setError(err.message); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, []);
 
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchCategory, setSearchCategory] = useState("None");
-    const [searchResults, setSearchResults] = useState([]);
-    const [searchArray, setSearchArray] = useState([]);
-    
+  const filtered = blogs.filter(blog => {
+    const matchesCategory =
+      searchCategory === 'None' ||
+      blog.category.toLowerCase() === searchCategory.toLowerCase();
+    const matchesSearch =
+      searchTerm === '' ||
+      Object.values(blog).join(' ').toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
-    const categoryHandler = (searchCategory) => {
+  if (loading) return <div className="text-center mt-10">Betoltes...</div>;
+  if (error)   return <div className="text-center mt-10 text-red-600">Hiba: {error}</div>;
+  if (!blogs.length) return <div className="text-center mt-10">Nincs blog bejegyzes</div>;
 
-        setSearchCategory(searchCategory);
+  return (
+    <BlogList
+      blogs={filtered}
+      searchTerm={searchTerm}
+      searchCategory={searchCategory}
+      searchHandler={setSearchTerm}
+      categoryHandler={setSearchCategory}
+    />
+  );
+};
 
-        if(searchCategory !== "None"){
-            const newBlogList = data.blogs.filter( (blog) => (
-                blog.category.toLowerCase() === searchCategory.toLowerCase()
-             ));
-             setSearchArray(newBlogList);
-             setSearchResults(newBlogList);
-        }else{
-            setSearchArray(data.blogs);
-            setSearchResults(data.blogs);
-        }       
-    }
-
-    const searchHandler = (searchTerm) => {
-
-        setSearchTerm(searchTerm);   
-
-        if(searchTerm !== ""){
-            const newBlogList = searchArray.filter((blog) => {
-                return Object.values(blog)
-                        .join(" ")
-                        .toLowerCase()
-                        .includes(searchTerm.toLowerCase())
-            })
-            setSearchResults(newBlogList);
-        }
-        else{
-            setSearchResults(data.blogs);
-        }
-    }
-    if(error) return<div>{console.log(error)}</div>
-    if(isLoading) return<div>Loading...</div>
-    if(data){
-    return ( 
-        <div>
-            
-            <div className="w-4/5 md:w-9/12 mx-auto mt-10">
-                
-            </div>
-           
-            <BlogList 
-                blogs={(searchTerm.length < 1 && searchCategory === "None") ? data.blogs : searchResults } 
-                searchTerm={searchTerm} searchCategory={searchCategory} searchHandler={searchHandler}
-                categoryHandler={categoryHandler}
-            />
-            
-        </div>
-     );
-    }return(<div>No blog found</div>)
-}
- 
 export default Home;

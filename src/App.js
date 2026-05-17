@@ -1,42 +1,28 @@
-import React from "react";
-import "./App.css";
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './App.css';
 
-//Import Components
+import Navbar from './component/Navbar/Navbar';
+import Home from './component/Home/Home';
+import AddBlog from './component/AddBlog/AddBlog';
+import BlogDetails from './component/BlogDetails/BlogDetails';
 
-import AddBlog from "./component/AddBlog/AddBlog";
-
-
-
-import PocketBase from 'pocketbase';
-
-const pb = new PocketBase('http://127.0.0.1:8090');
-
-
-const result = await pb.collection('example').getList(1, 20, {
-    filter: 'status = true && created > "2022-08-01 10:00:00"'
-});
-
-
-const userData = await pb.collection('users').authWithPassword('test@example.com', '123456');
-
-
-const adminData = await pb.admins.authWithPassword('test@example.com', '123456');
-
-
-
-
-
-  
 const App = () => {
   return (
-    <div className="main-container">
-      <h1 className="main-heading">
-        Blog App using React Js 
-      </h1>
-      <Posts />
-    </div>
+    <Router>
+      <div className="main-container">
+        <Navbar />
+        <h1 className="main-heading text-center text-3xl my-6">
+          Blog App using React JS
+        </h1>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/blogs/add" element={<AddBlog />} />
+          <Route path="/blogs/:id" element={<BlogDetails />} />
+        </Routes>
+      </div>
+    </Router>
   );
 };
-  
+
 export default App;
