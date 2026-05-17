@@ -2,6 +2,8 @@
 
 Egyszerű blog alkalmazás, amelyben kategória szerint lehet böngészni és új bejegyzéseket létrehozni. A frontend **React**-tel és **TailwindCSS**-szel készült, a backend **Express.js**-en fut, az adattárolás pedig **SQLite** relációs adatbázisban történik a Node.js beépített `node:sqlite` moduljával.
 
+> 📖 **Részletes technikai dokumentáció:** [DOCS.md](DOCS.md) — architektúra, adatfolyam, komponens-szintű leírás, kibővített API referencia, fejlesztői útmutató és troubleshooting.
+
 ## Tartalom
 
 - [Felépítés](#felépítés)
