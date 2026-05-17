@@ -17,11 +17,10 @@ afterEach(() => {
 });
 
 describe('App', () => {
-  it('a fooldalon megjelenik a fejlec', async () => {
+  it('a fooldalon megjelenik a WRITEUP wordmark', async () => {
     render(<App />);
-    expect(
-      screen.getByRole('heading', { name: /Blog App using React JS/i })
-    ).toBeInTheDocument();
+    const wordmarks = await screen.findAllByText(/writeup/i);
+    expect(wordmarks.length).toBeGreaterThan(0);
   });
 
   it('megprobalja lekerni a blogokat a backendrol', async () => {
@@ -44,7 +43,7 @@ describe('App', () => {
     );
     render(<App />);
     await waitFor(() => {
-      expect(screen.getByText(/Hiba:/i)).toBeInTheDocument();
+      expect(screen.getByText(/valami hiba tortent/i)).toBeInTheDocument();
     });
   });
 });

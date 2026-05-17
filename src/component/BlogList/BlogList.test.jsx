@@ -10,6 +10,7 @@ const sampleBlogs = [
     author: 'Anna',
     category: 'technology',
     blogImage: 'https://example.com/a.jpg',
+    createdAt: '2026-05-17 12:00:00',
   },
   {
     id: 2,
@@ -18,6 +19,7 @@ const sampleBlogs = [
     author: 'Bela',
     category: 'sports',
     blogImage: 'https://example.com/b.jpg',
+    createdAt: '2026-05-17 13:00:00',
   },
 ];
 
@@ -41,8 +43,8 @@ describe('BlogList', () => {
     renderList();
     expect(screen.getByText('React alapok')).toBeInTheDocument();
     expect(screen.getByText('Foci VB')).toBeInTheDocument();
-    expect(screen.getByText('Szerzo: Anna')).toBeInTheDocument();
-    expect(screen.getByText('#technology')).toBeInTheDocument();
+    expect(screen.getByText('Anna')).toBeInTheDocument();
+    expect(screen.getAllByText('technology').length).toBeGreaterThan(0);
   });
 
   it('a blog cimre kattintva navigalhato link mutat a reszletekre', () => {
@@ -56,7 +58,7 @@ describe('BlogList', () => {
   it('a kereses input valtozasakor meghivja a searchHandler-t', () => {
     const searchHandler = jest.fn();
     renderList({ searchHandler });
-    const input = screen.getByPlaceholderText('Kereses...');
+    const input = screen.getByLabelText(/bejegyzesek keresese/i);
     fireEvent.change(input, { target: { value: 'react' } });
     expect(searchHandler).toHaveBeenCalledWith('react');
   });
@@ -64,7 +66,7 @@ describe('BlogList', () => {
   it('a kategoria valasztaskor meghivja a categoryHandler-t', () => {
     const categoryHandler = jest.fn();
     renderList({ categoryHandler });
-    const select = screen.getByRole('combobox');
+    const select = screen.getByLabelText(/kategoria szuro/i);
     fireEvent.change(select, { target: { value: 'sports' } });
     expect(categoryHandler).toHaveBeenCalledWith('sports');
   });
@@ -72,5 +74,10 @@ describe('BlogList', () => {
   it('ures blog tomb eseten nem rajzol blogot', () => {
     renderList({ blogs: [] });
     expect(screen.queryByText('React alapok')).not.toBeInTheDocument();
+  });
+
+  it('hideToolbar=true eseten nem latszik a kereso', () => {
+    renderList({ hideToolbar: true });
+    expect(screen.queryByLabelText(/bejegyzesek keresese/i)).not.toBeInTheDocument();
   });
 });
