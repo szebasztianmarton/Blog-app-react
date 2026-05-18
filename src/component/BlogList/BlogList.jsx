@@ -69,24 +69,24 @@ export default function BlogList({
       {!hideToolbar && (
         <div className="mb-10 flex flex-col gap-3 sm:flex-row sm:items-stretch">
           <label className="relative flex-1">
-            <span className="sr-only">Kereses</span>
+            <span className="sr-only">Keresés</span>
             <input
               type="search"
-              placeholder="Kereses..."
+              placeholder="Keresés..."
               value={searchTerm}
               onChange={(e) => searchHandler(e.target.value)}
               className="input-brutal"
-              aria-label="Bejegyzesek keresese"
+              aria-label="Bejegyzések keresése"
             />
           </label>
           <select
             value={searchCategory}
             onChange={(e) => categoryHandler(e.target.value)}
             className="input-brutal sm:w-52 appearance-none"
-            aria-label="Kategoria szuro"
+            aria-label="Kategória szűrő"
           >
             {CATEGORIES.map((c) => (
-              <option key={c} value={c}>{c === 'None' ? 'Osszes kategoria' : c}</option>
+              <option key={c} value={c}>{c === 'None' ? 'Összes kategória' : c}</option>
             ))}
           </select>
         </div>

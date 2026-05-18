@@ -1,6 +1,6 @@
 export default function EmptyState({
-  title = 'Nincs talalat',
-  description = 'Probald meg modositani a kereses feltett.',
+  title = 'Nincs találat',
+  description = 'Próbálj meg módosítani a keresés feltételeit.',
   action,
 }) {
   return (

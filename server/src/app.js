@@ -28,7 +28,7 @@ function createApp() {
 
   app.use((err, req, res, next) => {
     console.error(err);
-    res.status(500).json({ error: 'Belso szerver hiba' });
+    res.status(500).json({ error: 'Belső szerver hiba' });
   });
 
   return app;

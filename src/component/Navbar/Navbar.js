@@ -4,7 +4,7 @@ import ThemeToggle from '../ThemeToggle/ThemeToggle';
 
 const links = [
   { to: '/', label: 'Blogok', end: true },
-  { to: '/blogs/add', label: 'Uj bejegyzes' },
+  { to: '/blogs/add', label: 'Új bejegyzés' },
 ];
 
 export default function Navbar() {
@@ -21,12 +21,12 @@ export default function Navbar() {
         <Link
           to="/"
           className="font-display font-bold text-2xl md:text-3xl tracking-tight title-link"
-          aria-label="Fooldal"
+          aria-label="Főoldal"
         >
           WRITEUP<span className="text-accent dark:text-accent-dark">.</span>
         </Link>
 
-        <nav aria-label="Fo navigacio" className="hidden md:flex items-center gap-8">
+        <nav aria-label="Fő navigáció" className="hidden md:flex items-center gap-8">
           {links.map((link) => (
             <NavLink
               key={link.to}
@@ -49,7 +49,7 @@ export default function Navbar() {
           <button
             type="button"
             className="btn-brutal btn-brutal--icon"
-            aria-label={open ? 'Menu bezarasa' : 'Menu megnyitasa'}
+            aria-label={open ? 'Menü bezárása' : 'Menü megnyitása'}
             aria-expanded={open}
             aria-controls="mobile-nav"
             onClick={() => setOpen((v) => !v)}
@@ -70,7 +70,7 @@ export default function Navbar() {
       {open && (
         <nav
           id="mobile-nav"
-          aria-label="Mobil navigacio"
+          aria-label="Mobil navigáció"
           className="md:hidden border-t-2 border-current bg-paper dark:bg-night"
         >
           <ul className="container-wide py-4 flex flex-col gap-1">

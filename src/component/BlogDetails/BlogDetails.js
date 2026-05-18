@@ -34,7 +34,7 @@ export default function BlogDetails() {
   }, [id, reloadKey]);
 
   const handleDelete = async () => {
-    if (!window.confirm('Biztos torolni szeretned ezt a bejegyzest? Nem visszavonhato.')) return;
+    if (!window.confirm('Biztos törlöd ezt a bejegyzést? Nem visszavonható.')) return;
     setDeleting(true);
     try {
       await api.deleteBlog(id);
@@ -68,7 +68,7 @@ export default function BlogDetails() {
             <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
               <path d="M19 12H5M11 6l-6 6 6 6" />
             </svg>
-            Vissza az archivumba
+            Vissza az archívumba
           </Link>
         </nav>
 
@@ -84,7 +84,7 @@ export default function BlogDetails() {
 
         <div className="flex items-center justify-between border-t-2 border-b-2 border-current py-4">
           <div>
-            <p className="eyebrow mb-1">Szerzo</p>
+            <p className="eyebrow mb-1">Szerző</p>
             <p className="font-display text-lg md:text-xl font-medium">{blog.author}</p>
           </div>
           <button
@@ -93,7 +93,7 @@ export default function BlogDetails() {
             disabled={deleting}
             className="btn-brutal btn-brutal--danger btn-brutal--sm"
           >
-            {deleting ? 'Torles...' : 'Torles'}
+            {deleting ? 'Törlés...' : 'Törlés'}
           </button>
         </div>
       </header>
@@ -125,9 +125,8 @@ export default function BlogDetails() {
         <hr className="rule max-w-prose mx-auto" />
 
         <div className="max-w-prose mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <p className="meta-mono">Vege / Issue 01</p>
           <Link to="/" className="btn-brutal btn-brutal--ghost">
-            Tovabbi bejegyzesek
+            További bejegyzések
           </Link>
         </div>
       </div>
